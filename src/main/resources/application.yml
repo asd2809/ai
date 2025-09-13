@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: cbj-ai-code-mother-backen
+# ???????
+server:
+  port: 8123
+  servlet:
+#    ?????(????????/api)
+    context-path: /api
+
+# springdoc-openapi????
+springdoc:
+  group-configs:
+    - group: 'default'
+      paths-to-match: '/**'
+#      ?????
+      packages-to-scan: com.yupi.cbjaicodemother.controller
+# knife4j???????????????
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
