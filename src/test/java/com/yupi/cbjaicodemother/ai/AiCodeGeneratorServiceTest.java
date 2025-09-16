@@ -1,6 +1,8 @@
 package com.yupi.cbjaicodemother.ai;
 
 
+import com.yupi.cbjaicodemother.ai.model.HtmlCodeResult;
+import com.yupi.cbjaicodemother.ai.model.MultiFileCodeResult;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,13 +16,13 @@ class AiCodeGeneratorServiceTest {
 
     @Test
     void generateHtmlCode() {
-        String result = aiCodeGeneratorService.generateHtmlCode("做个程序员鱼皮的工作记录小工具");
+        HtmlCodeResult result = aiCodeGeneratorService.generateHtmlCode("做个程序员鱼皮的网站，不超过10行");
         Assertions.assertNotNull(result);
     }
 
     @Test
-    void generateMultiFileCode() {
-        String multiFileCode = aiCodeGeneratorService.generateMultiFileCode("做个程序员鱼皮的留言板");
+    void generateMultiFileCode()    {
+        MultiFileCodeResult multiFileCode = aiCodeGeneratorService.generateMultiFileCode("做个程序员陈保姜的留言板，不超过10行");
         Assertions.assertNotNull(multiFileCode);
     }
 }
