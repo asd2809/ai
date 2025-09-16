@@ -31,7 +31,6 @@ public class CodeFileSaver {
         String baseDirPath = buildUniqueDir(CodeGenTypeEnum.HTML.getValue());
         writeToFile(baseDirPath,"index.html",htmlCodeResult.getHtmlCode());
         return new File(baseDirPath);
-
     }
 
     /**
@@ -42,8 +41,8 @@ public class CodeFileSaver {
     public static File saveMultiFileCodeResult(MultiFileCodeResult multiFileCodeResult) {
         String baseDirPath = buildUniqueDir(CodeGenTypeEnum.MULTI_FILE.getValue());
         writeToFile(baseDirPath,"index.html",multiFileCodeResult.getHtmlCode());
-        writeToFile(baseDirPath,"style.css",multiFileCodeResult.getHtmlCode());
-        writeToFile(baseDirPath,"script.js",multiFileCodeResult.getHtmlCode());
+        writeToFile(baseDirPath,"style.css",multiFileCodeResult.getCssCode());
+        writeToFile(baseDirPath,"script.js",multiFileCodeResult.getJsCode());
         return new File(baseDirPath);
     }
 
