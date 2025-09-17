@@ -24,11 +24,11 @@ public abstract  class CodeFileSaverTemplate<T> {
      * @param result
      * @return
      */
-    public final File saveCode(T result){
+    public final File saveCode(T result,Long appId){
         /// 1.验证输入
         validateInput(result);
         /// 2.构建唯一目录
-        String baseDirPath = buildUniqueDir();
+        String baseDirPath = buildUniqueDir(appId);
         /// 3.保存文件
         saveFiles(result,baseDirPath);
         /// 4.返回目录对象
@@ -55,10 +55,13 @@ public abstract  class CodeFileSaverTemplate<T> {
      * 返回目录路径
      * @return
      */
-    protected String buildUniqueDir(){
+    protected String buildUniqueDir(Long appId){
+        if(appId == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"应用id不能为空");
+        }
         String bizType = getCodeType().getValue();
         /// 通过雪花算法生成唯一目录
-        String  uniqueDirName = StrUtil.format("{}_{}",bizType, IdUtil.getSnowflakeNextIdStr());
+        String  uniqueDirName = StrUtil.format("{}_{}",bizType, appId   );
         /// File.separator是用来添加路径分隔符
         String dirPath = FILE_SAVE_ROOT_DIR + File.separator + uniqueDirName;
         /// 一次性创建多级目录的
