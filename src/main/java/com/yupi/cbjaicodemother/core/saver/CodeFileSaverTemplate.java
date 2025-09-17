@@ -4,6 +4,7 @@ package com.yupi.cbjaicodemother.core.saver;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
+import com.yupi.cbjaicodemother.constant.AppConstant;
 import com.yupi.cbjaicodemother.exception.BusinessException;
 import com.yupi.cbjaicodemother.exception.ErrorCode;
 import com.yupi.cbjaicodemother.model.enums.CodeGenTypeEnum;
@@ -16,7 +17,7 @@ import java.nio.charset.StandardCharsets;
  */
 public abstract  class CodeFileSaverTemplate<T> {
 
-    private static final String FILE_SAVE_ROOT_DIR = System.getProperty("user.dir") + "/tmp/code_output";
+    private static final String FILE_SAVE_ROOT_DIR = AppConstant.CODE_OUTPUT_ROOT_DIR;
 
     /**
      * 模板

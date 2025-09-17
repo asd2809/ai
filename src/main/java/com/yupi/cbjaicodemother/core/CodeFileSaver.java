@@ -5,6 +5,7 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.yupi.cbjaicodemother.ai.model.HtmlCodeResult;
 import com.yupi.cbjaicodemother.ai.model.MultiFileCodeResult;
+import com.yupi.cbjaicodemother.constant.AppConstant;
 import com.yupi.cbjaicodemother.model.enums.CodeGenTypeEnum;
 
 import java.io.File;
@@ -20,7 +21,7 @@ public class CodeFileSaver {
      *1.文件保存目录
      *用来存放“你准备把生成的代码文件保存到哪个文件夹”的绝对路径字符串。
      */
-    private static final String FILE_SAVE_ROOT_DIR = System.getProperty("user.dir") + "/tmp/code_output";
+    private static final String FILE_SAVE_ROOT_DIR = AppConstant.CODE_OUTPUT_ROOT_DIR;
 
     /**
      * 2.保存 HTML 网页代码

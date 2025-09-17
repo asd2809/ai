@@ -44,6 +44,7 @@ public class AiCodeGeneratorFacade {
             case MULTI_FILE -> {
                 MultiFileCodeResult multiFileCodeResult= aiCodeGeneratorService.generateMultiFileCode(userMessage);
                 yield  CodeFileSaverExecutor.executeSaver(multiFileCodeResult,codeGenTypeEnum,appId);
+
             }
             default -> {
                 String errorMessage = "不支持的生成系统" + codeGenTypeEnum.getValue();

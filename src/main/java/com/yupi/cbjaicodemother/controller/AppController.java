@@ -50,6 +50,24 @@ public class AppController {
     @Resource
     private UserService userService;
 
+    @PostMapping("/deploy")
+    public BaseResponse<String> deployApp(@RequestBody AppDeployRequest appDeployRequest,HttpServletRequest request) {
+        ///1、参数校验
+        ThrowUtils.throwIf(appDeployRequest ==null,ErrorCode.PARAMS_ERROR);
+        ///2、获取用户
+        User  loginUser = userService.getLoginUser(request);
+        ///3、调用接口
+        String result = appService.deployApp(appDeployRequest.getAppId(), loginUser);
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * 通过应用id和，提示词，向llm发出请求，获取对应的结果
+     * @param appId
+     * @param message
+     * @param request
+     * @return
+     */
     @GetMapping(value = "/chat/gen/code",produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<String>> chatToGenCode(@RequestParam Long appId,
                                                        @RequestParam String message,
