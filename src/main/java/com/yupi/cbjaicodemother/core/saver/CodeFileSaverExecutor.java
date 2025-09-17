@@ -21,10 +21,10 @@ public class CodeFileSaverExecutor {
 
     private static final MultiFileCodeFileSaverTemplate MULTI_FILE_CODE_FILE_SAVER_TEMPLATE = new MultiFileCodeFileSaverTemplate();
     /// 这个是输入的参数类型不同
-    public static File executeSaver(Object codeResult, CodeGenTypeEnum codeGenTypeEnum) {
+    public static File executeSaver(Object codeResult, CodeGenTypeEnum codeGenTypeEnum,Long appId) {
         return switch(codeGenTypeEnum){
-            case HTML -> HTML_CODE_FILE_SAVER_TEMPLATE.saveCode((HtmlCodeResult) codeResult);
-            case MULTI_FILE -> MULTI_FILE_CODE_FILE_SAVER_TEMPLATE.saveCode((MultiFileCodeResult) codeResult);
+            case HTML -> HTML_CODE_FILE_SAVER_TEMPLATE.saveCode((HtmlCodeResult) codeResult,appId);
+            case MULTI_FILE -> MULTI_FILE_CODE_FILE_SAVER_TEMPLATE.saveCode((MultiFileCodeResult) codeResult,appId);
             default -> throw new BusinessException(ErrorCode.PARAMS_ERROR,"没有找到匹配的代码文件存储类型 ");
         };
 
