@@ -61,7 +61,7 @@ public abstract  class CodeFileSaverTemplate<T> {
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"应用id不能为空");
         }
         String bizType = getCodeType().getValue();
-        /// 通过雪花算法生成唯一目录
+        /// 通过应用Id生成唯一目录
         String  uniqueDirName = StrUtil.format("{}_{}",bizType, appId   );
         /// File.separator是用来添加路径分隔符
         String dirPath = FILE_SAVE_ROOT_DIR + File.separator + uniqueDirName;

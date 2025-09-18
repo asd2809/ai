@@ -25,6 +25,7 @@ import com.yupi.cbjaicodemother.service.AppService;
 import com.yupi.cbjaicodemother.service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
@@ -50,6 +51,13 @@ public class AppController {
     @Resource
     private UserService userService;
 
+    /**
+     * 将网站进行部署，并且获取对应的访问url
+     *
+     * @param appDeployRequest
+     * @param request
+     * @return
+     */
     @PostMapping("/deploy")
     public BaseResponse<String> deployApp(@RequestBody AppDeployRequest appDeployRequest,HttpServletRequest request) {
         ///1、参数校验

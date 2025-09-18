@@ -16,16 +16,20 @@ import com.yupi.cbjaicodemother.model.dto.app.AppVO;
 import com.yupi.cbjaicodemother.model.entity.App;
 import com.yupi.cbjaicodemother.mapper.AppMapper;
 import com.yupi.cbjaicodemother.model.entity.User;
+import com.yupi.cbjaicodemother.model.enums.ChatHistoryMessageTypeEnum;
 import com.yupi.cbjaicodemother.model.enums.CodeGenTypeEnum;
 import com.yupi.cbjaicodemother.model.vo.UserVO;
 import com.yupi.cbjaicodemother.service.AppService;
+import com.yupi.cbjaicodemother.service.ChatHistoryService;
 import com.yupi.cbjaicodemother.service.UserService;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 import java.io.File;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,6 +40,7 @@ import java.util.stream.Collectors;
  * @author <a href="https://github.com/liyupi">程序员鱼皮</a>
  */
 @Service
+@Slf4j
 public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppService{
 
     @Resource
@@ -43,6 +48,10 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
 
     @Resource
     private AiCodeGeneratorFacade aiCodeGeneratorFacade;
+
+    @Resource
+    private ChatHistoryService chatHistoryService;
+
     @Override
     public AppVO getAppVO(App app) {
         if (app == null) {
@@ -123,8 +132,25 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
         ThrowUtils.throwIf(codeGenType == null,ErrorCode.PARAMS_ERROR);
         CodeGenTypeEnum codeGenTypeEnum = CodeGenTypeEnum.getEnumByValue(codeGenType);
         ThrowUtils.throwIf(codeGenTypeEnum == null,ErrorCode.PARAMS_ERROR,"不存在该代码类型");
-        /// 5.调用AI生成代码
-        return aiCodeGeneratorFacade.generateAndSaveCodeStream(message, codeGenTypeEnum, appId);
+        /// 5.在调用AI前，先保存用户消息到数据库中
+        chatHistoryService.addCHatMessage(appId, message, ChatHistoryMessageTypeEnum.USER.getText(), loginUser.getId());
+        /// 6.调用AI生成代码
+        Flux<String> messageFlux = aiCodeGeneratorFacade.generateAndSaveCodeStream(message, codeGenTypeEnum, appId);
+        /// 7.存入AI的消息
+        StringBuilder aiResponseBuilder = new StringBuilder();
+        return messageFlux.map(chunk -> {
+            // 实时收集AI响应的内容
+            aiResponseBuilder.append(chunk);
+            return chunk;
+        }).doOnComplete(() -> {
+            /// 流失返回之后 保存AI消息到对话历史中
+            String aiResponse = aiResponseBuilder.toString();
+            chatHistoryService.addCHatMessage(appId, aiResponse, ChatHistoryMessageTypeEnum.AI.getText(), loginUser.getId());
+        }).doOnError(err -> {
+            /// 如果AI回复失败，也需要保存记录到数据中
+            String aiError = "AI 回复失败" + err.getMessage();
+            chatHistoryService.addCHatMessage(appId, aiError, ChatHistoryMessageTypeEnum.AI.getText(), loginUser.getId());
+        });
     }
 
     @Override
@@ -145,6 +171,7 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
         String deployKey = RandomUtil.randomString(6);
         /// 5. 获取代码生成类型，获取原始代码生成路径(应用访问目录)
         String codeGenType = app.getCodeGenType();
+        /// 拼接文件名
         String sourceDirName = codeGenType + "_" + appId;
         String sourceDirPath = AppConstant.CODE_OUTPUT_ROOT_DIR + File.separator + sourceDirName;
         /// 6. 检查路径是否存在
@@ -171,5 +198,27 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
         return String.format("%s/%s",AppConstant.CODE_DEPLOY_HOST,deployKey);
     }
 
-
+    /**
+     * 重写方法
+     * 是为了在删除应用的同时删除对应的 历史记录
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public boolean removeById(Serializable id) {
+        ThrowUtils.throwIf(id == null, ErrorCode.PARAMS_ERROR);
+        long appId = Long.parseLong(id.toString());
+        if (appId <= 0) {
+            return false;
+        }
+        ///先删除对应的对话历史记录
+        try {
+            chatHistoryService.deleteByAppId((Long) appId);
+        } catch (Exception e) {
+            log.error("删除对应的会话记录失败 {}", e.getMessage(), e);
+        }
+        /// 删除应用
+        return super.removeById(appId);
+    }
 }
