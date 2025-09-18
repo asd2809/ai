@@ -2,6 +2,7 @@ package com.yupi.cbjaicodemother.core;
 
 
 import com.yupi.cbjaicodemother.ai.AiCodeGeneratorService;
+import com.yupi.cbjaicodemother.ai.AiCodeGeneratorServiceFactory;
 import com.yupi.cbjaicodemother.ai.model.HtmlCodeResult;
 import com.yupi.cbjaicodemother.ai.model.MultiFileCodeResult;
 import com.yupi.cbjaicodemother.core.parser.CodeParseExecutor;
@@ -25,7 +26,7 @@ public class AiCodeGeneratorFacade {
 
 
     @Resource
-    private AiCodeGeneratorService aiCodeGeneratorService;
+    private AiCodeGeneratorServiceFactory aiCodeGeneratorServiceFactory;
     /**
      * 非流式输出
      * @param userMessage
@@ -36,6 +37,7 @@ public class AiCodeGeneratorFacade {
         if(codeGenTypeEnum == null){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR);
         }
+        AiCodeGeneratorService aiCodeGeneratorService = aiCodeGeneratorServiceFactory.getAiCodeGeneratorService(appId);
         return switch (codeGenTypeEnum){
             case HTML -> {
                 HtmlCodeResult htmlCodeResult = aiCodeGeneratorService.generateHtmlCode(userMessage);
@@ -62,6 +64,7 @@ public class AiCodeGeneratorFacade {
         if(codeGenTypeEnum == null){
             throw new BusinessException(ErrorCode.SYSTEM_ERROR);
         }
+        AiCodeGeneratorService aiCodeGeneratorService = aiCodeGeneratorServiceFactory.getAiCodeGeneratorService(appId);
         return switch (codeGenTypeEnum){
             case HTML -> {
                 Flux<String> stringFlux = aiCodeGeneratorService.generateHtmlCodeStream(userMessage);
@@ -102,7 +105,7 @@ public class AiCodeGeneratorFacade {
                 File file = CodeFileSaverExecutor.executeSaver(htmlCodeResult,codeGenTypeEnum,appId);
                 log.info("多文件目录创建完成，目录为:{}" , file.getAbsolutePath());
             }catch(Exception e){
-                log.error("保存失败：{}", e.getMessage());
+                log.error("多文件目录创建失败：{}", e.getMessage());
             }
         });
     }

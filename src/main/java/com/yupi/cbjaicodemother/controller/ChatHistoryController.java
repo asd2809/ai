@@ -42,7 +42,7 @@ public class ChatHistoryController {
                                                               @RequestParam(defaultValue = "10") int pageSize,
                                                               @RequestParam(required = false)LocalDateTime lastCreatTime,
                                                               HttpServletRequest request) {
-        User loginUser = (User) request.getSession().getAttribute("loginUser");
+        User loginUser = userService.getLoginUser(request);
         Page<ChatHistory> chatHistoryPage = chatHistoryService.listAppChatHistoryByPage(appId, pageSize, lastCreatTime, loginUser);
         return ResultUtils.success(chatHistoryPage);
     }

@@ -4,19 +4,36 @@ spring:
 
   application:
     name: cbj-ai-code-mother-backen
-
+  # session 配置
+  session:
+    #默认是保存在内存中的，现在改为redis中
+    store-type: redis
+    # session 30 天过期
+    timeout: 2592000
   # mysql
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/yu_ai_code_mother
     username: root
     password: root
+  data:
+    redis:
+      host: localhost
+      port: 6379
+#      设置存入redis中的过期时间
+      ttl: 3600
+      password:
+
 # ???????
 server:
   port: 8123
   servlet:
 #    ?????(????????/api)
     context-path: /api
+    # cookie 30 天过期
+    session:
+      cookie:
+        max-age: 2592000
 
 
 # springdoc-openapi????

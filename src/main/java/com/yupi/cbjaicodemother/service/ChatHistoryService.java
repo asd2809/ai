@@ -7,6 +7,7 @@ import com.yupi.cbjaicodemother.model.dto.chathistory.ChatHistoryQueryRequest;
 import com.yupi.cbjaicodemother.model.entity.ChatHistory;
 import com.yupi.cbjaicodemother.model.entity.User;
 import com.mybatisflex.core.paginate.Page;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +17,15 @@ import java.time.LocalDateTime;
  * @author <a href="https://github.com/liyupi">程序员鱼皮</a>
  */
 public interface ChatHistoryService extends IService<ChatHistory> {
+
+    /**
+     * 加载历史对话到内存
+     * @param appId
+     * @param chatMemory
+     * @param maxCount 返回的条数
+     * @return 加载成功的条数
+     */
+    int loadChatHistoryToMemory(Long appId, MessageWindowChatMemory chatMemory, int maxCount);
 
     /**
      * 添加聊天记录

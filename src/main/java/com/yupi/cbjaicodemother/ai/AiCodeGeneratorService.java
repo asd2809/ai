@@ -4,7 +4,9 @@ package com.yupi.cbjaicodemother.ai;
 
 import com.yupi.cbjaicodemother.ai.model.HtmlCodeResult;
 import com.yupi.cbjaicodemother.ai.model.MultiFileCodeResult;
+import dev.langchain4j.service.MemoryId;
 import dev.langchain4j.service.SystemMessage;
+import dev.langchain4j.service.UserMessage;
 import reactor.core.publisher.Flux;
 
 public interface AiCodeGeneratorService {
@@ -16,7 +18,7 @@ public interface AiCodeGeneratorService {
      * @return 生成的代码结果
      */
     @SystemMessage(fromResource = "prompt/codegen-html-system-prompt.txt")
-    HtmlCodeResult generateHtmlCode(String userMessage);
+    HtmlCodeResult generateHtmlCode( @UserMessage String userMessage);
 
     /**
      * 生成多文件代码

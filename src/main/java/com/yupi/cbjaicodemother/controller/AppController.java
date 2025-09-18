@@ -81,7 +81,7 @@ public class AppController {
                                                        @RequestParam String message,
                                                        HttpServletRequest request) {
         /// 参数校验
-        ThrowUtils.throwIf(appId == null || appId <=0,ErrorCode.PARAMS_ERROR,"应用 id 错误");
+        ThrowUtils.throwIf(appId == null || appId <= 0,ErrorCode.PARAMS_ERROR,"应用 id 错误");
         ThrowUtils.throwIf(message==null || message.isEmpty(),ErrorCode.PARAMS_ERROR,"提示词不能为空");
         User loginUser = userService.getLoginUser(request);
         Flux<String> contentFlux = appService.chatToGenCode(appId, message, loginUser);
